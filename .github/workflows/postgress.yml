@@ -38,6 +38,13 @@ jobs:
         # Runs a script that creates a PostgreSQL table, populates
         # the table with data, and then retrieves the data.
         run: node client.js
+
+      - name: Migrations
+        run: npm run migrations-generate
+
+      - name: Tests
+        run: npm run test
+        
         # Environment variables used by the `client.js` script to create a new PostgreSQL table.
         env:
           # Nombre del host utilizado para comunicarse con el contenedor de servicios PostgreSQL
