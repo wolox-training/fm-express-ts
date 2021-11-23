@@ -61,7 +61,7 @@ const config: IConfig = {
   },
   hearthstone: {
     baseURL: process.env.HEARTHSTONE_API_BASE_URL || 'https://omgvamp-hearthstone-v1.p.rapidapi.com',
-    secret: process.env.HEARTHSTONE_API_KEY
+    secret: process.env.HEARTHSTONE_API_KEY as string
   }
 };
 
