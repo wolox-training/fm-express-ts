@@ -30,7 +30,7 @@ export interface Card {
   howToGetDiamond?: string;
 }
 
-export enum CardSet {
+enum CardSet {
   AshesOfOutland = 'Ashes of Outland',
   Battlegrounds = 'Battlegrounds',
   BlackrockMountain = 'Blackrock Mountain',
@@ -70,7 +70,7 @@ export enum CardSet {
   WhispersOfTheOldGods = 'Whispers of the Old Gods'
 }
 
-export enum Class {
+enum Class {
   DeathKnight = 'Death Knight',
   DemonHunter = 'Demon Hunter',
   Dream = 'Dream',
@@ -87,17 +87,17 @@ export enum Class {
   Whizbang = 'Whizbang'
 }
 
-export enum Faction {
+enum Faction {
   Alliance = 'Alliance',
   Horde = 'Horde',
   Neutral = 'Neutral'
 }
 
-export interface Mechanic {
+interface Mechanic {
   name: Name;
 }
 
-export enum Name {
+enum Name {
   AIMustPlay = 'AIMustPlay',
   Adapt = 'Adapt',
   AdjacentBuff = 'AdjacentBuff',
@@ -148,7 +148,7 @@ export enum Name {
   Windfury = 'Windfury'
 }
 
-export enum Race {
+enum Race {
   All = 'All',
   Beast = 'Beast',
   Demon = 'Demon',
@@ -161,7 +161,7 @@ export enum Race {
   Totem = 'Totem'
 }
 
-export enum Rarity {
+enum Rarity {
   Common = 'Common',
   Epic = 'Epic',
   Free = 'Free',
@@ -169,7 +169,7 @@ export enum Rarity {
   Rare = 'Rare'
 }
 
-export enum SpellSchool {
+enum SpellSchool {
   Arcane = 'Arcane',
   Fel = 'Fel',
   Fire = 'Fire',
@@ -179,7 +179,7 @@ export enum SpellSchool {
   Shadow = 'Shadow'
 }
 
-export enum Type {
+enum Type {
   Enchantment = 'Enchantment',
   Hero = 'Hero',
   HeroPower = 'Hero Power',
@@ -201,7 +201,7 @@ export interface CardsInfo {
   locales: Locales;
 }
 
-export interface Locales {
+interface Locales {
   DE_DE: string;
   EN_GB: string;
   EN_US: string;
