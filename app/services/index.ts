@@ -1,7 +1,7 @@
-import todosService from './todos';
-import cardsService from './cards';
+import todos from './todos';
+import cards from './cards';
 
 export default {
-  todosService,
-  cardsService
+  todos,
+  cards
 };
