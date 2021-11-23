@@ -48,6 +48,14 @@ jobs:
 
       - name: Migrations
         run: npm run migrations-generate
+        env:
+          DB_HOST: 'localhost'
+          DB_PORT: 5432
+          DB_USERNAME: 'fm_express_ts'
+          DB_PASSWORD: 'fm_express_ts'
+          DB_NAME: 'fm_express_ts'
+          DB_NAME_DEV: 'fm_express_ts'
+          DB_NAME_TEST: 'fm_express_ts'
 
       - name: Test
         run: npm run test
