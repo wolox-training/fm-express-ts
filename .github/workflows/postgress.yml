@@ -47,7 +47,9 @@ jobs:
           POSTGRES_PORT: 5432
 
       - name: Migrations
-        run: npm run migrations-generate
+        # run: npm run migrations-generate
+        run: npm run migrations-create
+        run: npm run migrations
         env:
           DB_HOST: Postgres
           DB_PORT: 5432
