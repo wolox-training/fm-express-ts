@@ -1,4 +1,5 @@
-# typescript-base
+![example workflow](https://github.com/wolox-training/fm-express-ts/actions/workflows/main.yml/badge.svg)
+# fm-express-ts
 
 Example base for typescript projects
 
