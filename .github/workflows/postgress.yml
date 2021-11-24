@@ -46,9 +46,10 @@ jobs:
           # Puerto PostgreSQL predeterminado
           POSTGRES_PORT: 5432
 
-      - name: Migrations
+      - name: Migrations create
         # run: npm run migrations-generate
         run: npm run migrations-create
+      - name: migrations run
         run: npm run migrations
         env:
           DB_HOST: Postgres
