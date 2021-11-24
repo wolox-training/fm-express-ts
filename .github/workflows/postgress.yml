@@ -59,7 +59,7 @@ jobs:
 
       - name: Test
         run: npm run test
-      env:
+        env:
           DB_HOST: Postgres
           DB_PORT: 5432
           DB_USERNAME: postgres
