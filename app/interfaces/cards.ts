@@ -1,3 +1,6 @@
+export interface Cards {
+  [key: string]: Card[];
+}
 export interface Card {
   cardId: string;
   dbfId: string;

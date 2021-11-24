@@ -1,7 +1,7 @@
 import axios from 'axios';
 import config from '../../config';
 import { externalApiError } from '../errors';
-import { Card, CardsInfo } from '../interfaces/cards';
+import { Cards, CardsInfo } from '../interfaces/cards';
 
 const BASE_URL = config.hearthstone.baseURL;
 const KEY = config.hearthstone.secret;
@@ -15,18 +15,18 @@ const card = axios.create({
   }
 });
 
-export async function getAllCards(): Promise<Card[]> {
+export async function getAllCards(): Promise<Cards> {
   try {
-    const response = await card.get<Card[]>('cards');
+    const response = await card.get<Cards>('cards');
     return response.data;
   } catch (error) {
     throw externalApiError(`External API error getting all cards ${error}`);
   }
 }
 
-export async function getInfo(): Promise<CardsInfo[]> {
+export async function getInfo(): Promise<CardsInfo> {
   try {
-    const response = await card.get<CardsInfo[]>('info');
+    const response = await card.get<CardsInfo>('info');
     return response.data;
   } catch (error) {
     throw externalApiError(`External API error gettinf cards info ${error}`);
