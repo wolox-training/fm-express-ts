@@ -47,7 +47,6 @@ jobs:
           POSTGRES_PORT: 5432
 
       - name: Migrations
-        run: node create.db.js
         run: npm run migrations-generate
         env:
           DB_HOST: Postgres
