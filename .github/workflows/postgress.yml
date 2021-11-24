@@ -47,15 +47,16 @@ jobs:
           POSTGRES_PORT: 5432
 
       - name: Migrations
+        run: node create.db.js
         run: npm run migrations-generate
         env:
           DB_HOST: Postgres
           DB_PORT: 5432
-          DB_USERNAME: fm_express_ts
-          DB_PASSWORD: fm_express_ts
-          DB_NAME: fm_express_ts
-          DB_NAME_DEV: fm_express_ts
-          DB_NAME_TEST: fm_express_ts
+          DB_USERNAME: postgres
+          DB_PASSWORD: postgres
+          DB_NAME: postgres
+          DB_NAME_DEV: postgres
+          DB_NAME_TEST: postgres
 
       - name: Test
         run: npm run test
