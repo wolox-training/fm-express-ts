@@ -18,3 +18,6 @@ export const alreadyExistError = createInternalError(ALREADY_EXIST_ERROR, HTTP_C
 
 export const EXTERNAL_API_ERROR = 'external_api_error';
 export const externalApiError = createInternalError(EXTERNAL_API_ERROR, HTTP_CODES.NOT_FOUND);
+
+export const BAD_REQUEST_ERROR = 'bad_request_error';
+export const badRequestError = createInternalError(BAD_REQUEST_ERROR, HTTP_CODES.BAD_REQUEST);

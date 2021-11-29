@@ -7,7 +7,7 @@ export function findUser(options?: FindConditions<User>): Promise<User | undefin
   return userRepository().findOne(options);
 }
 
-export function createAndSave(user: User): Promise<User> {
+export function create(user: User): Promise<User> {
   return userRepository().save(user);
 }
 
@@ -23,5 +23,5 @@ export default {
   findAll,
   createMany,
   findUser,
-  createAndSave
+  create
 };
