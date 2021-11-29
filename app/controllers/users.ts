@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import HttpStatus from 'http-status-codes';
-import { encrypt, compareEncrypt } from '../helpers/crypto';
+import { encrypt } from '../helpers/crypto';
 import logger from '../logger';
 import { isAlphabetic, isAlphaNumeric, isEmailValid } from '../helpers/validator';
 import userService from '../services/users';
