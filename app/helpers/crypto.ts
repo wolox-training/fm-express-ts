@@ -1,15 +1,26 @@
 import bcryptjs from 'bcryptjs';
+import logger from '../logger';
 
-export function encrypt(data: string): string {
-  const salt: string = bcryptjs.genSaltSync(10);
-  return bcryptjs.hashSync(data, salt);
+export async function encrypt(data: string): Promise<string> {
+  try {
+    const salt: string = await bcryptjs.genSalt(10);
+    return await bcryptjs.hash(data, salt);
+  } catch (error) {
+    throw new Error(`Helper encrypt: ${error}`);
+  }
 }
 
-export function compareEncrypt(hash: string, data: string): boolean {
-  if (hash && data) {
-    return bcryptjs.compareSync(data, hash);
+export async function compareEncrypt(hash: string, data: string): Promise<boolean> {
+  try {
+    if (hash && data) {
+      return await bcryptjs.compare(data, hash);
+    }
+    logger.error('compareEncrypt: not found params hash or data');
+    return false;
+  } catch (error) {
+    logger.error(`compareEncrypt Error:${error}`);
+    return false;
   }
-  return false;
 }
 
 export default { encrypt, compareEncrypt };
