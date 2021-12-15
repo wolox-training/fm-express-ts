@@ -2,7 +2,6 @@ import request from 'supertest';
 import { factory } from 'factory-girl';
 import userRepository from '../app/services/users';
 import app from '../app';
-
 import { User } from '../app/models/user';
 
 factory.define('User', User, {
@@ -13,9 +12,9 @@ factory.define('User', User, {
 });
 
 describe('users', () => {
-  beforeEach(async () =>
-    userRepository.createMany([await factory.attrs('User'), await factory.attrs('User')])
-  );
+  beforeEach(async () => {
+    await userRepository.createMany([await factory.attrs('User'), await factory.attrs('User')]);
+  });
   describe('/users GET', () => {
     it('should return all users', (done: jest.DoneCallback) => {
       request(app)
