@@ -36,7 +36,11 @@ export async function userValidator(
   }
 }
 
-export async function userHandlMiddleware(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function userValidatorMiddleware(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
   const { name, lastName, password, email } = req.body;
 
   if (!name || !lastName || !password || !email) {
