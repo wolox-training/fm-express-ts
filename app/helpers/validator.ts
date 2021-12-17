@@ -11,7 +11,7 @@ export function isAlphaNumeric(value: string): boolean {
 }
 
 export function isEmailValid(email: string): boolean {
-  const regex: RegExp = /^(([^<>()[\].,;:¿?\s@"]+(\.[^<>()[\].,;:¿?\s@"]+)*)|(".+"))+@wolox\.+((\w+\.)+\w{2,})$/;
+  const regex: RegExp = /^(([^<>()[\].,;:¿?\s@"]+(\.[^<>()[\].,;:¿?\s@"]+)*)|(".+"))+@wolox?((\w+\.)+\w{2,})$/;
   return regex.test(email);
 }
 export default { isAlphabetic, isAlphaNumeric, isEmailValid };

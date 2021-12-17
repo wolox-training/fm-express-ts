@@ -14,5 +14,5 @@ export class User {
   email: string;
 
   @Column({ name: 'password', type: 'varchar' })
-  pass: string;
+  password: string;
 }
