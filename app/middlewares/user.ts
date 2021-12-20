@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import userService from '../services/users';
 import { isAlphabetic, isAlphaNumeric, isEmailValid } from '../helpers/validator';
 import { badRequestError } from '../errors';
+import logger from '../logger';
 
 export async function userValidator(
   firstName: string,
@@ -52,5 +53,27 @@ export async function userValidatorMiddleware(
     return next(badRequestError(`createUser: Error to create new user,${validUser}`));
   }
 
+  return next();
+}
+
+export async function loginValidatorMiddleware(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<string | void> {
+  const { email, password } = req.body;
+  if (!password || !email) {
+    return next(badRequestError('Login: some parameter is missing'));
+  }
+
+  if (!isEmailValid) {
+    return next(badRequestError('Login: Invalid email'));
+  }
+
+  const user = await userService.findUser({ email });
+  if (!user) {
+    logger.info('usuario no existe');
+    return next(badRequestError('Login: email no existe'));
+  }
   return next();
 }
