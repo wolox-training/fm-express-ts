@@ -46,9 +46,9 @@ export function getUserById(req: Request, res: Response, next: NextFunction): Pr
 }
 
 export async function login(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
-  const { email, password } = req.body;
   try {
-    const user: User | undefined = await userService.findUser({ email });
+    const { user } = req;
+    const { password } = req.body;
 
     if (!user) {
       return next(authenticationError('Error: user not found'));

@@ -6,7 +6,7 @@ const SECRET: string = config.common.session.secret;
 
 export const HEADER_NAME = config.common.session.header_name;
 
-export function encode(toEncode: object): string {
+export function encode<T>(toEncode: T): string {
   return jwt.encode(toEncode, SECRET);
 }
 
