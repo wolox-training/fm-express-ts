@@ -3,6 +3,7 @@ import { factory } from 'factory-girl';
 import userRepository from '../app/services/users';
 import app from '../app';
 import { User } from '../app/models/user';
+import { encrypt } from '../app/helpers/crypto';
 
 factory.define('User', User, {
   name: factory.chance('name'),
@@ -13,7 +14,12 @@ factory.define('User', User, {
 
 describe('users', () => {
   beforeEach(async () => {
-    await userRepository.createMany([await factory.attrs('User'), await factory.attrs('User')]);
+    const user1: User = await factory.attrs('User');
+    const user2: User = await factory.attrs('User');
+
+    user1.password = await encrypt(user1.password);
+    user2.password = await encrypt(user2.password);
+    await userRepository.createMany([user1, user2]);
   });
   describe('/users GET', () => {
     it('should return all users', (done: jest.DoneCallback) => {
@@ -96,6 +102,22 @@ describe('users', () => {
         .then((res: request.Response) => {
           expect(res.body).toHaveProperty('message');
           expect(res.body).toHaveProperty('internal_code');
+          done();
+        });
+    });
+  });
+  describe('/users/sessions', () => {
+    it('correct login return token', async (done: jest.DoneCallback) => {
+      const user: User = await factory.attrs('User');
+      const noEncryptPass = user.password;
+      user.password = await encrypt(user.password);
+      await userRepository.createMany([user]);
+      request(app)
+        .post('/users/sessions')
+        .send({ email: user.email, password: noEncryptPass })
+        .expect(200)
+        .then((res: request.Response) => {
+          expect(res.body).toHaveProperty('token');
           done();
         });
     });

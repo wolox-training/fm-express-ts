@@ -1,10 +1,11 @@
 import { NextFunction, Request, Response } from 'express';
 import HttpStatus from 'http-status-codes';
-import { encrypt } from '../helpers/crypto';
+import { encrypt, compareEncrypt } from '../helpers/crypto';
 import logger from '../logger';
 import userService from '../services/users';
 import { User } from '../models/user';
-import { notFoundError, databaseError } from '../errors';
+import { notFoundError, databaseError, authenticationError } from '../errors';
+import { encode } from '../services/session';
 
 export function getUsers(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
   return userService
@@ -36,4 +37,26 @@ export function getUserById(req: Request, res: Response, next: NextFunction): Pr
       return res.send(user);
     })
     .catch(next);
+}
+
+export async function login(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
+  const { email, password } = req.body;
+  try {
+    const user: User | undefined = await userService.findUser({ email });
+
+    if (!user) {
+      return next(authenticationError('Error: user not found'));
+    }
+    const passValid: boolean = await compareEncrypt(user.password, password);
+
+    if (!passValid) {
+      return next(authenticationError('Error: password invalid'));
+    }
+    const userToEncode = { id: user.id, email: user.email };
+    const token = encode(userToEncode);
+    return res.status(HttpStatus.OK).send({ token });
+  } catch (error) {
+    logger.error(`login error ${error}`);
+    return next(databaseError('Database error'));
+  }
 }
