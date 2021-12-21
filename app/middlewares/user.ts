@@ -73,8 +73,8 @@ export async function loginValidatorMiddleware(
   const user = await userService.findUser({ email });
   req.user = user;
   if (!user) {
-    logger.info('usuario no existe');
-    return next(badRequestError('Login: email no existe'));
+    logger.info('User not found');
+    return next(badRequestError('Login: email not found'));
   }
   return next();
 }
