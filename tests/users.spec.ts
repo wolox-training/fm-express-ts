@@ -22,13 +22,28 @@ describe('users', () => {
     await userRepository.createMany([user1, user2]);
   });
   describe('/users GET', () => {
-    it('should return all users', (done: jest.DoneCallback) => {
+    it('should return all users', async (done: jest.DoneCallback) => {
+      const user: User = await factory.attrs('User');
+      const noEncryptPass = user.password;
+      user.password = await encrypt(user.password);
+      await userRepository.createMany([user]);
+      // const listUsers: User[] = await factory.createMany('User', 8);
+      // await userRepository.createMany(listUsers);
+
       request(app)
-        .get('/users')
+        .post('/users/sessions')
+        .send({ email: user.email, password: noEncryptPass })
         .expect(200)
-        .then((res: request.Response) => {
-          expect(res.body.length).toBe(2);
-          done();
+        .then((res1: request.Response) => {
+          request(app)
+            .get('/users')
+            .set({ Authorization: res1.body.token })
+            .query({ page: 2, limit: 1 })
+            .expect(200)
+            .then((res2: request.Response) => {
+              expect(res2.body.length).toBe(1);
+              done();
+            });
         });
     });
   });
@@ -47,7 +62,8 @@ describe('users', () => {
     });
     it('should return error for email is already use', async (done: jest.DoneCallback) => {
       const user: User = await factory.attrs('User');
-      user.email = 'dummy-user-6@wolox.com';
+      user.email = 'dummy-user@wolox.com';
+      await userRepository.createMany([user]);
       request(app)
         .post('/users')
         .send({ name: user.name, lastName: user.lastName, password: user.password, email: user.email })
@@ -106,7 +122,7 @@ describe('users', () => {
         });
     });
   });
-  describe('/users/sessions', () => {
+  describe('/users/sessions POST', () => {
     it('correct login return token', async (done: jest.DoneCallback) => {
       const user: User = await factory.attrs('User');
       const noEncryptPass = user.password;

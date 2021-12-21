@@ -8,10 +8,16 @@ import { notFoundError, databaseError, authenticationError } from '../errors';
 import { encode } from '../services/session';
 
 export function getUsers(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
+  const page: number = Number(req.query.page) || 1;
+  const take: number = Number(req.query.limit) || 5;
+  const skip: number = (page - 1) * take;
+
   return userService
-    .findAll()
+    .findAll({ skip, take })
     .then((users: User[]) => res.send(users))
-    .catch(next);
+    .catch(() => {
+      next(databaseError('getUser: erro when get users'));
+    });
 }
 
 export async function createUser(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
