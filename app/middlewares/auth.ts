@@ -16,5 +16,6 @@ export async function secure(req: Request, res: Response, next: NextFunction): P
       return next();
     }
   }
-  return next(authenticationError);
+
+  return next(authenticationError('Error: Unauthorized'));
 }

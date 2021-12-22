@@ -4,14 +4,25 @@ import { encrypt, compareEncrypt } from '../helpers/crypto';
 import logger from '../logger';
 import userService from '../services/users';
 import { User } from '../models/user';
-import { notFoundError, databaseError, authenticationError } from '../errors';
+import { notFoundError, databaseError, authenticationError, badRequestError } from '../errors';
 import { encode } from '../services/session';
 
 export function getUsers(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
+  const page: number = Number(req.query.page) || 1;
+  const take: number = Number(req.query.limit) || 5;
+
+  if (page <= 0 || take <= 0) {
+    next(badRequestError('Error: bad query'));
+  }
+
+  const skip: number = (page - 1) * take;
+
   return userService
-    .findAll()
+    .findAll({ skip, take })
     .then((users: User[]) => res.send(users))
-    .catch(next);
+    .catch(() => {
+      next(databaseError('getUser: erro when get users'));
+    });
 }
 
 export async function createUser(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
@@ -40,9 +51,9 @@ export function getUserById(req: Request, res: Response, next: NextFunction): Pr
 }
 
 export async function login(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
-  const { email, password } = req.body;
   try {
-    const user: User | undefined = await userService.findUser({ email });
+    const { user } = req;
+    const { password } = req.body;
 
     if (!user) {
       return next(authenticationError('Error: user not found'));

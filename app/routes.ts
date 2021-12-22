@@ -4,11 +4,11 @@ import { getUsers, getUserById, createUser, login } from './controllers/users';
 import { getTodos } from './controllers/todos';
 import { getCardsInfo, getCards } from './controllers/cards';
 import { userValidatorMiddleware, loginValidatorMiddleware } from './middlewares/user';
-// import { secure } from './middlewares/auth';
+import { secure } from './middlewares/auth';
 
 export const init = (app: Application): void => {
   app.get('/health', healthCheck);
-  app.get('/users', getUsers);
+  app.get('/users', secure, getUsers);
   app.post('/users', userValidatorMiddleware, createUser);
   app.get('/users/:id', getUserById);
   app.get('/todos', getTodos);
