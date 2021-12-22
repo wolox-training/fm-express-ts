@@ -4,6 +4,7 @@ import userRepository from '../app/services/users';
 import app from '../app';
 import { User } from '../app/models/user';
 import { encrypt } from '../app/helpers/crypto';
+import { encode } from '../app/services/session';
 
 factory.define('User', User, {
   name: factory.chance('name'),
@@ -24,26 +25,18 @@ describe('users', () => {
   describe('/users GET', () => {
     it('should return all users', async (done: jest.DoneCallback) => {
       const user: User = await factory.attrs('User');
-      const noEncryptPass = user.password;
       user.password = await encrypt(user.password);
       await userRepository.createMany([user]);
-      // const listUsers: User[] = await factory.createMany('User', 8);
-      // await userRepository.createMany(listUsers);
-
+      const userToEncode = { id: user.id, email: user.email };
+      const token = encode(userToEncode);
       request(app)
-        .post('/users/sessions')
-        .send({ email: user.email, password: noEncryptPass })
+        .get('/users')
+        .set({ Authorization: token })
+        .query({ page: 2, limit: 1 })
         .expect(200)
-        .then((res1: request.Response) => {
-          request(app)
-            .get('/users')
-            .set({ Authorization: res1.body.token })
-            .query({ page: 2, limit: 1 })
-            .expect(200)
-            .then((res2: request.Response) => {
-              expect(res2.body.length).toBe(1);
-              done();
-            });
+        .then((res: request.Response) => {
+          expect(res.body.length).toBe(1);
+          done();
         });
     });
   });
