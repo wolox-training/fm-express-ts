@@ -4,7 +4,7 @@ import { encrypt, compareEncrypt } from '../helpers/crypto';
 import logger from '../logger';
 import userService from '../services/users';
 import { User } from '../models/user';
-import { notFoundError, databaseError, authenticationError, badRequestError} from '../errors';
+import { notFoundError, databaseError, authenticationError, badRequestError } from '../errors';
 import { encode } from '../services/session';
 
 export function getUsers(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
