@@ -22,10 +22,9 @@ export async function secure(req: Request, res: Response, next: NextFunction): P
 }
 
 export function adminRole(req: Request, res: Response, next: NextFunction): void {
-  if (req.user && req.user.role === ROLES.ADMIN) {
+  if (req?.user?.role === ROLES.ADMIN) {
     return next();
   }
   logger.info('Error: Rol Unauthorized');
   return next(authenticationError('Error: Rol Unauthorized'));
-  // res.status(HTTP_CODES.UNAUTHORIZED).json({ message: ERROR_MESSAGE.UNAUTHORIZED });
 }
