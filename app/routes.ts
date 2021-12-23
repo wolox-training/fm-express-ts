@@ -1,10 +1,10 @@
 import { Application } from 'express';
 import { healthCheck } from './controllers/healthCheck';
-import { getUsers, getUserById, createUser, login } from './controllers/users';
+import { getUsers, getUserById, createUser, login, createAdminUser } from './controllers/users';
 import { getTodos } from './controllers/todos';
 import { getCardsInfo, getCards } from './controllers/cards';
 import { userValidatorMiddleware, loginValidatorMiddleware } from './middlewares/user';
-import { secure } from './middlewares/auth';
+import { secure, adminRole } from './middlewares/auth';
 
 export const init = (app: Application): void => {
   app.get('/health', healthCheck);
@@ -15,4 +15,5 @@ export const init = (app: Application): void => {
   app.get('/info', getCardsInfo);
   app.get('/cards', getCards);
   app.post('/users/sessions', loginValidatorMiddleware, login);
+  app.post('/admin/users', secure, adminRole, userValidatorMiddleware, createAdminUser);
 };
