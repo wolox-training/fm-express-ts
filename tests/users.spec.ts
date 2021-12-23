@@ -5,12 +5,14 @@ import app from '../app';
 import { User } from '../app/models/user';
 import { encrypt } from '../app/helpers/crypto';
 import { encode } from '../app/services/session';
+import { ROLES } from '../app/constants';
 
 factory.define('User', User, {
   name: factory.chance('name'),
   lastName: factory.chance('last', { middle: true }),
   email: factory.sequence('User.email', (n: number) => `dummy-user-${n}@wolox.com`),
-  password: factory.sequence('User.password', (n: number) => `passwor${n}`)
+  password: 'pa55word',
+  role: ROLES.USER
 });
 
 describe('users', () => {
@@ -60,7 +62,7 @@ describe('users', () => {
       request(app)
         .post('/users')
         .send({ name: user.name, lastName: user.lastName, password: user.password, email: user.email })
-        .expect(400)
+        .expect(409)
         .then((res: request.Response) => {
           expect(res.body).toHaveProperty('message');
           expect(res.body).toHaveProperty('internal_code');
@@ -127,6 +129,53 @@ describe('users', () => {
         .expect(200)
         .then((res: request.Response) => {
           expect(res.body).toHaveProperty('token');
+          done();
+        });
+    });
+  });
+  describe('/admin/user POST', () => {
+    it('User admin create a user admin', async (done: jest.DoneCallback) => {
+      const adminUser: User = await factory.attrs('User');
+      adminUser.password = await encrypt(adminUser.password);
+      adminUser.role = ROLES.ADMIN;
+      await userRepository.createMany([adminUser]);
+      const token = encode(adminUser);
+      const user: User = await factory.attrs('User');
+      request(app)
+        .post('/admin/users')
+        .set({ Authorization: token })
+        .send({
+          name: user.name,
+          lastName: user.lastName,
+          password: user.password,
+          email: user.email,
+          role: ROLES.ADMIN
+        })
+        .expect(201)
+        .then(async () => {
+          const newuser = await userRepository.findUser({ name: user.name });
+          expect(newuser).not.toBeNull();
+          done();
+        });
+    });
+    it('Error when user is not a admin', async (done: jest.DoneCallback) => {
+      const adminUser: User = await factory.attrs('User');
+      adminUser.password = await encrypt(adminUser.password);
+      await userRepository.createMany([adminUser]);
+      const token = encode(adminUser);
+      const user: User = await factory.attrs('User');
+      request(app)
+        .post('/admin/users')
+        .set({ Authorization: token })
+        .send({
+          name: user.name,
+          lastName: user.lastName,
+          password: user.password,
+          email: user.email,
+          role: ROLES.ADMIN
+        })
+        .expect(401)
+        .then(() => {
           done();
         });
     });

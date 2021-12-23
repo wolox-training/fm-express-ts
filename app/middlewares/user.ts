@@ -4,12 +4,12 @@ import { isAlphabetic, isAlphaNumeric, isEmailValid } from '../helpers/validator
 import { badRequestError } from '../errors';
 import logger from '../logger';
 
-export async function userValidator(
+export function userValidator(
   firstName: string,
   lastName: string,
   password: string,
   email: string
-): Promise<string | null> {
+): string | null {
   try {
     if (!isAlphabetic(firstName)) {
       return 'the name has to be only contain alphabetic characters';
@@ -20,15 +20,11 @@ export async function userValidator(
     }
 
     if (password && (!isAlphaNumeric(password) || password.length < 8 || password.length > 8)) {
-      return 'the password has to be alphanumeric asnd have length major to 8';
-    }
-    const existEmail = await userService.findUser({ email });
-    if (!isEmailValid(email)) {
-      return 'invalid email';
+      return 'the password has to be alphanumeric and have length major to 8';
     }
 
-    if (existEmail) {
-      return 'email already exist';
+    if (!isEmailValid(email)) {
+      return 'invalid email';
     }
 
     return null;
@@ -43,16 +39,16 @@ export async function userValidatorMiddleware(
   next: NextFunction
 ): Promise<void> {
   const { name, lastName, password, email } = req.body;
-
   if (!name || !lastName || !password || !email) {
+    logger.info('createUser: Error with params');
     return next(badRequestError('createUser: Error with params'));
   }
 
   const validUser = await userValidator(name, lastName, password, email);
   if (validUser) {
+    logger.info(`createUser: Error to create new user,${validUser}`);
     return next(badRequestError(`createUser: Error to create new user,${validUser}`));
   }
-
   return next();
 }
 

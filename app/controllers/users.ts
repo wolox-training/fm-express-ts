@@ -1,10 +1,17 @@
 import { NextFunction, Request, Response } from 'express';
 import HttpStatus from 'http-status-codes';
+import { ROLES } from '../constants';
 import { encrypt, compareEncrypt } from '../helpers/crypto';
 import logger from '../logger';
 import userService from '../services/users';
 import { User } from '../models/user';
-import { notFoundError, databaseError, authenticationError, badRequestError } from '../errors';
+import {
+  notFoundError,
+  databaseError,
+  authenticationError,
+  badRequestError,
+  alreadyExistError
+} from '../errors';
 import { encode } from '../services/session';
 
 export function getUsers(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
@@ -29,12 +36,47 @@ export async function createUser(req: Request, res: Response, next: NextFunction
   const { name, lastName, password, email } = req.body;
 
   try {
+    const existEmail = await userService.findUser({ email });
+    if (existEmail) {
+      return next(alreadyExistError('Error: email already exist.'));
+    }
     const passwordEncrypt: string = await encrypt(password);
     const newUser = await userService.create({ name, lastName, password: passwordEncrypt, email } as User);
     logger.info(`User ${newUser.name} ${newUser.lastName} created`);
     return res.status(HttpStatus.CREATED).send({ newUser });
   } catch (error) {
     return next(databaseError(`createUser: Error saving new user ${error}`));
+  }
+}
+
+export async function createAdminUser(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<Response | void> {
+  try {
+    const { name, lastName, password, email } = req.body;
+    const existUser = await userService.findUser({ email });
+
+    if (existUser && existUser.role !== ROLES.ADMIN) {
+      existUser.role = ROLES.ADMIN;
+      const userSaved = await userService.create(existUser);
+      logger.info(`user ${userSaved.id} updated with role: ${ROLES.ADMIN}`);
+      return res.status(HttpStatus.OK).send({ id: userSaved.id });
+    }
+
+    const passwordEncrypt: string = await encrypt(password);
+    const newUser = await userService.create({
+      name,
+      lastName,
+      password: passwordEncrypt,
+      email,
+      role: ROLES.ADMIN
+    } as User);
+    logger.info(`User ${newUser.name} ${newUser.lastName} created`);
+    return res.status(HttpStatus.CREATED).send({ newUser });
+  } catch (error) {
+    return next(databaseError(`createAdminUser: Error saving user ${error}`));
   }
 }
 
