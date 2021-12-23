@@ -158,6 +158,30 @@ describe('users', () => {
           done();
         });
     });
+    it('Change user with role user to admin', async (done: jest.DoneCallback) => {
+      const adminUser: User = await factory.attrs('User');
+      const user: User = await factory.attrs('User');
+      adminUser.password = await encrypt(adminUser.password);
+      adminUser.role = ROLES.ADMIN;
+      await userRepository.createMany([adminUser, user]);
+      const token = encode(adminUser);
+      request(app)
+        .post('/admin/users')
+        .set({ Authorization: token })
+        .send({
+          name: user.name,
+          lastName: user.lastName,
+          password: user.password,
+          email: user.email,
+          role: ROLES.ADMIN
+        })
+        .expect(200)
+        .then(async () => {
+          const newuser = await userRepository.findUser({ name: user.name });
+          expect(newuser).not.toBeNull();
+          done();
+        });
+    });
     it('Error when user is not a admin', async (done: jest.DoneCallback) => {
       const adminUser: User = await factory.attrs('User');
       adminUser.password = await encrypt(adminUser.password);
