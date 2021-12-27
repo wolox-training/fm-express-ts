@@ -14,6 +14,7 @@ export interface IConfig {
       database: string;
       username: string;
       password: string;
+      ssl: object;
       type: dialect;
       logging: boolean;
     };
