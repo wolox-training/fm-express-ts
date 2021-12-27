@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 type ENV_VAR = string | undefined;
 
 type dialect = 'postgres' | 'mysql' | 'sqlite' | 'mssql' | 'oracle';
@@ -14,8 +15,8 @@ export interface IConfig {
       database: string;
       username: string;
       password: string;
-      ssl: object;
       type: dialect;
+      extra: any;
       logging: boolean;
     };
     api: {
