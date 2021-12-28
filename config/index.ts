@@ -39,7 +39,7 @@ const config: IConfig = {
       database: process.env.DB_NAME || 'database',
       username: process.env.DB_USERNAME || 'username',
       password: process.env.DB_PASSWORD || 'password',
-      extra: {
+      extra: process.env.DB_EXTRA_SSL || {
         ssl: {
           rejectUnauthorized: false
         }
