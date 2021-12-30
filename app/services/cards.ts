@@ -33,7 +33,17 @@ export async function getInfo(): Promise<CardsInfo> {
   }
 }
 
+export async function getCardById(id: string): Promise<Cards> {
+  try {
+    const response = await card.get<Cards>(`cards/${id}`);
+    return response.data;
+  } catch (error) {
+    throw externalApiError(`External API error gettinf cards info ${error}`);
+  }
+}
+
 export default {
   getAllCards,
-  getInfo
+  getInfo,
+  getCardById
 };
